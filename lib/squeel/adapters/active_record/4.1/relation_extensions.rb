@@ -301,7 +301,7 @@ module Squeel
           def build_join_from_subquery(subquery_joins)
             subquery_joins.map do |join|
               join.type.new(
-                Arel::Nodes::TableAlias.new(join.subquery.left.arel, join.subquery.right),
+                Arel::Nodes::TableAlias.new(Arel::Nodes::Grouping.new(join.subquery.left.arel.ast), join.subquery.right),
                 Arel::Nodes::On.new(where_visit(join.constraints))
               )
             end

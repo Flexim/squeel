@@ -527,6 +527,16 @@ module Squeel
               pending 'Unsupported in Active Record < 3.2.7'
             end
           end
+
+          it 'works with subqueries and joins' do
+            has_commented = Person.joins(:comments).select{id.as(person_id)}
+            by_people_w_comments = Article.joins{comments.outer}
+              .joins(has_commented.as('people_with_comments').on {person_id == people_with_comments.person_id})
+
+            expect{ by_people_w_comments.distinct().count}.not_to raise_error
+            by_people_w_comments.distinct().count.should eq 30
+          end
+
         end
 
         describe '#group' do
